@@ -1,0 +1,170 @@
+Here is a complete, single-file HTML blueprint for a supermarket website. It includes an embedded CSS stylesheet for a clean layout and a JavaScript shopping cart system. [1, 2, 3] 
+Save the code below as index.html and open it in any web browser. [4] 
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart Supermarket</title>
+    <style>
+        /* Global Styles */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background: #f4f4f4; color: #333; }
+        
+        /* Header & Navigation */
+        header { background: #2e7d32; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .logo { font-size: 24px; font-weight: bold; }
+        .cart-icon { background: #1b5e20; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+
+        /* Main Layout */
+        .container { display: flex; padding: 20px; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        
+        /* Product Grid */
+        .products-section { flex: 3; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .product-card { background: white; padding: 15px; border-radius: 8px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .product-img { width: 100%; height: 15px; background: #ddd; border-radius: 5px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px; }
+        .product-price { color: #2e7d32; font-weight: bold; margin: 10px 0; }
+        .add-btn { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; width: 100%; }
+        .add-btn:hover { background: #1b5e20; }
+
+        /* Sidebar Cart */
+        .cart-section { flex: 1; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); height: fit-content; }
+        .cart-title { border-bottom: 2px solid #eee; padding-bottom: 10px; margin-bottom: 15px; }
+        .cart-item { display: flex; justify-content: space-between; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px dashed #eee; }
+        .cart-total { font-size: 18px; font-weight: bold; margin-top: 15px; padding-top: 15px; border-top: 2px solid #eee; display: flex; justify-content: space-between; }
+        .checkout-btn { background: #ff9800; color: white; border: none; padding: 10px; width: 100%; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 15px; }
+        .checkout-btn:hover { background: #e65100; }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">🥦 marvel supermarket</div>
+        <div class="cart-icon">🛒 Cart (<span id="cart-count">0</span>)</div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Products Grid -->
+        <main class="products-section">
+            <h2 style="margin-bottom: 20px;">Our Products</h2>
+            <div class="grid">
+                
+                <!-- Product 1 -->
+                <div class="product-card">
+                    <div class="product-img">[ Image Place-holder ]</div>
+                    <h3>Fresh Apples (1kg)</h3>
+                    <p class="product-price">KES 250</p>
+                    <button class="add-btn" onclick="addToCart('Fresh Apples', 250)">Add to Cart</button>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card">
+                    <div class="product-img">[ Image Place-holder ]</div>
+                    <h3>Whole Milk (1L)</h3>
+                    <p class="product-price">KES 110</p>
+                    <button class="add-btn" onclick="addToCart('Whole Milk', 110)">Add to Cart</button>
+                </div>
+
+                <!-- Product 3 -->
+                <div class="product-card">
+                    <div class="product-img">[ Image Place-holder ]</div>
+                    <h3>White Bread</h3>
+                    <p class="product-price">KES 65</p>
+                    <button class="add-btn" onclick="addToCart('White Bread', 65)">Add to Cart</button>
+                </div>
+
+                <!-- Product 4 -->
+                <div class="product-card">
+                    <div class="product-img">[ Image Place-holder ]</div>
+                    <h3>Basmati Rice (1kg)</h3>
+                    <p class="product-price">KES 220</p>
+                    <button class="add-btn" onclick="addToCart('Basmati Rice', 220)">Add to Cart</button>
+                </div>
+
+            </div>
+        </main>
+
+        <!-- Shopping Cart -->
+        <aside class="cart-section">
+            <h3 class="cart-title">Your Basket</h3>
+            <div id="cart-items">
+                <!-- JavaScript inserts items here -->
+                <p style="color: #999; text-align: center;">Basket is empty</p>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span>KES <span id="cart-total-val">0</span></span>
+            </div>
+            <button class="checkout-btn" onclick="checkout()">Proceed to Checkout</button>
+        </aside>
+
+    </div>
+
+    <!-- JavaScript functionality -->
+    <script>
+        let cart = [];
+
+        function addToCart(name, price) {
+            // Check if item already exists in cart
+            let existingItem = cart.find(item => item.name === name);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ name: name, price: price, quantity: 1 });
+            }
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotalVal = document.getElementById('cart-total-val');
+            
+            if (cart.length === 0) {
+                cartItemsContainer.innerHTML = '<p style="color: #999; text-align: center;">Basket is empty</p>';
+                cartCount.innerText = '0';
+                cartTotalVal.innerText = '0';
+                return;
+            }
+
+            cartItemsContainer.innerHTML = '';
+            let total = 0;
+            let itemCount = 0;
+
+            cart.forEach(item => {
+                let itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                itemCount += item.quantity;
+
+                cartItemsContainer.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <strong>${item.name}</strong><br>
+                            <small>${item.quantity} x KES ${item.price}</small>
+                        </div>
+                        <span>KES ${itemTotal}</span>
+                    </div>
+                `;
+            });
+
+            cartCount.innerText = itemCount;
+            cartTotalVal.innerText = total;
+        }
+
+        function checkout() {
+            if(cart.length === 0) {
+                alert("Your basket is empty!");
+            } else {
+                alert("Thank you for your order! Processing payment...");
+                cart = [];
+                updateCartUI();
+            }
+        }
+    </script>
+</body>
+</html>
